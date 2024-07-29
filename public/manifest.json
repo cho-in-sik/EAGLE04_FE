@@ -1,10 +1,10 @@
 {
-  "name": "vite-pwa",
+  "name": "글담길",
   "short_name": "vite-pwa",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#485EEE",
+  "theme_color": "#f5f3ed",
   "icons": [
     {
       "src": "icons/icon-192x192.png",

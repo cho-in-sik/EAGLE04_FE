@@ -1,9 +1,14 @@
 import naver from '../../public/svgs/naver.svg';
 import styled from 'styled-components';
+import { api } from '../api/customAxios';
 
 export default function NaverLogin() {
+  const handleLogin = async () => {
+    const res = await api.get('/oauth2/authorization/naver');
+    console.log(res);
+  };
   return (
-    <NaverLoginButton>
+    <NaverLoginButton onClick={handleLogin}>
       <img src={naver} alt="naverLogo" />
       네이버로 로그인
     </NaverLoginButton>

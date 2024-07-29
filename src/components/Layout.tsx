@@ -13,6 +13,7 @@ export default function Layout() {
 
 const Wrapper = styled.div`
   background-color: #f5f3ed;
+
   height: 100svh;
 `;
 
