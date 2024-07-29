@@ -12,11 +12,11 @@ const router = createBrowserRouter([
     // errorElement: <NotFound />,
     children: [
       {
-        path: '/login',
+        path: 'login',
         element: <Login />,
       },
       {
-        path: '/user/:userId',
+        path: 'user/:userId',
         element: <PickCulture />,
       },
     ],
