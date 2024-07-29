@@ -1,27 +1,22 @@
-import { Button } from '@mui/material';
-import naverLogo from '../assets/images/naver.png';
+import naver from '../../public/svgs/naver.svg';
 import styled from 'styled-components';
 
 export default function NaverLogin() {
   return (
-    <NaverLoginButton
-      startIcon={<img width="48px" height="48px" src={naverLogo} />}
-      disableElevation={true}
-      variant="contained"
-      sx={{
-        textTransform: 'none',
-        color: '#fff',
-        fontSize: '24',
-        background: '#03c75a',
-        borderRadius: '10px',
-        '&:hover': { background: '#03c75a' },
-      }}
-    >
+    <NaverLoginButton>
+      <img src={naver} alt="naverLogo" />
       네이버로 로그인
     </NaverLoginButton>
   );
 }
 
-const NaverLoginButton = styled(Button)`
+const NaverLoginButton = styled.div`
   width: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  background: linear-gradient(0deg, #03c75a 0%, #03c75a 100%), #f4f4f4;
+  color: white;
 `;
