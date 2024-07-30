@@ -7,9 +7,15 @@
     <title>Vite + React + TS</title>
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="icon-152x152.png" sizes="152x152" />
+    <script
+      type="text/javascript"
+      src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.0.js"
+      charset="utf-8"
+    ></script>
   </head>
   <body>
     <div id="root"></div>
+
     <script type="module" src="/src/main.tsx">
       if ("serviceWorker" in navigator) {
            // Register a service worker hosted at the root of the

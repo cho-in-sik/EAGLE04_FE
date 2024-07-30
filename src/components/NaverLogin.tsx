@@ -1,27 +1,17 @@
-import naver from '../../public/svgs/naver.svg';
-import styled from 'styled-components';
-import { api } from '../api/customAxios';
+import { useEffect } from 'react';
 
 export default function NaverLogin() {
-  const handleLogin = async () => {
-    const res = await api.get('/oauth2/authorization/naver');
-    console.log(res);
-  };
-  return (
-    <NaverLoginButton onClick={handleLogin}>
-      <img src={naver} alt="naverLogo" />
-      네이버로 로그인
-    </NaverLoginButton>
-  );
-}
+  useEffect(() => {
+    const { naver }: any = window;
+    const naverLogin = new naver.LoginWithNaverId({
+      clientId: '0V3OBGPQXT6L_6HirZoh',
+      callbackUrl: 'http://localhost:5173/naver',
+      clientSecret: 'OmpKQBt7Z6',
+      isPopup: false,
+      loginButton: { color: 'green', type: 3, height: '60' },
+    });
+    naverLogin.init();
+  }, []);
 
-const NaverLoginButton = styled.div`
-  width: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 12px;
-  background: linear-gradient(0deg, #03c75a 0%, #03c75a 100%), #f4f4f4;
-  color: white;
-`;
+  return <div id="naverIdLogin">네이버로 로그인</div>;
+}
