@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 // Category 타입 정의
@@ -10,6 +11,8 @@ interface Category {
 }
 
 export default function PickCulture() {
+  const location = useLocation();
+  console.log(location);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const categories: Category[] = [

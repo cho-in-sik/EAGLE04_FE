@@ -10,6 +10,8 @@ import 'swiper/css/effect-cards';
 import './styles.css';
 import styled from 'styled-components';
 import { useState, useEffect } from 'react';
+import { naverApi } from '../api/naverCloudAPI';
+import axios from 'axios';
 
 export default function Home() {
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -31,6 +33,18 @@ export default function Home() {
 
   const handleBookmarkClick = () => {
     setIsBookmarked(!isBookmarked);
+  };
+
+  const handleVoice = async () => {
+    try {
+      // const res = await axios.post(
+      //   'https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts',
+      // );
+      const res = await naverApi.post('/tts-premium/v1/tts');
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -62,7 +76,9 @@ export default function Home() {
           </ImgWrapper>
           Slide 1
         </SwiperSlide>
-        <SwiperSlide>Slide 2</SwiperSlide>
+        <SwiperSlide>
+          <button onClick={handleVoice}>일단 보내봐</button>
+        </SwiperSlide>
         <SwiperSlide>Slide 3</SwiperSlide>
         <SwiperSlide>Slide 4</SwiperSlide>
         <SwiperSlide>Slide 5</SwiperSlide>

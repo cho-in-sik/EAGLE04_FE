@@ -1,19 +1,22 @@
 import styled from 'styled-components';
 import mail from '../../public/svgs/mail.svg';
 import NaverLogin from '../components/NaverLogin';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+  const navigate = useNavigate();
+
   return (
     <Wrapper>
       <FlexWrapper>
         <H>글담길</H>
         <H>welcome</H>
         <LastH>message</LastH>
-        <SingupBtn>
+        <SingupBtn onClick={() => navigate('/self-login')}>
           <img src={mail} alt="mail" style={{ marginRight: '40px' }} />
-          회원가입
+          시작하기
         </SingupBtn>
-        <NaverLogin></NaverLogin>
+        <NaverLogin />
       </FlexWrapper>
     </Wrapper>
   );
@@ -23,7 +26,7 @@ const Wrapper = styled.div`
   padding-top: 70px;
   width: 100%;
   height: 100%;
-  background-color: #4a4a4a;
+  background-color: #242767;
   border-radius: 79px 10px 0px 0px;
   padding-bottom: 190px;
 `;

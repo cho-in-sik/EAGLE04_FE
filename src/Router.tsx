@@ -6,6 +6,9 @@ import PickCulture from './pages/PickCulture';
 import Naver from './pages/Naver';
 import Home from './pages/Home';
 
+import SelfLogin from './pages/SelfLogin';
+import checkTokenCategory from './utils/loaders';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -18,8 +21,14 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+        path: '/self-login',
+        element: <SelfLogin />,
+      },
+
+      {
         path: '/user/categorypick',
         element: <PickCulture />,
+        loader: checkTokenCategory,
       },
     ],
   },

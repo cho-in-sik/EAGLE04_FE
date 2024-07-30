@@ -1,24 +1,12 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 const naverApi: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_NAVERCLOUD_KEY,
-  timeout: 3000,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'X-NCP-APIGW-API-KEY': 'ufidSOZb4RSYamN6sITiSCAtjOxxkwH79Qe0APdj',
+    'X-NCP-APIGW-API-KEY-ID': 'jgsin43ptq',
   },
 });
-
-naverApi.interceptors.request.use(
-  async (
-    config: InternalAxiosRequestConfig,
-  ): Promise<InternalAxiosRequestConfig> => {
-    return config;
-  },
-  (error) => {
-    console.log(error);
-    alert(error.response?.data.message);
-    throw error;
-  },
-);
 
 export { naverApi };
