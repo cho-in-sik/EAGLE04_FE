@@ -8,6 +8,8 @@ import Home from './pages/Home';
 
 import SelfLogin from './pages/SelfLogin';
 import checkTokenCategory from './utils/loaders';
+import CategoryHome from './pages/CategoryHome';
+import Quiz from './pages/Quiz';
 
 const router = createBrowserRouter([
   {
@@ -37,8 +39,16 @@ const router = createBrowserRouter([
     element: <Naver />,
   },
   {
-    path: 'home',
+    path: 'home/:category',
     element: <Home />,
+  },
+  {
+    path: 'category-home',
+    element: <CategoryHome />,
+  },
+  {
+    path: 'quiz',
+    element: <Quiz />,
   },
 ]);
 

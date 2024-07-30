@@ -11,8 +11,8 @@ interface Category {
 }
 
 export default function PickCulture() {
-  const location = useLocation();
-  console.log(location);
+  const { state } = useLocation();
+  console.log(state);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const categories: Category[] = [
@@ -37,7 +37,9 @@ export default function PickCulture() {
   return (
     <Wrapper>
       <div style={{ marginBottom: '-20px' }}>
-        <h1 style={{ fontSize: '19px', fontWeight: 800 }}>글담길님,</h1>
+        <h1
+          style={{ fontSize: '19px', fontWeight: 800 }}
+        >{`${state.name}님,`}</h1>
         <div style={{ fontSize: '19px', marginBottom: '5px' }}>
           가장 관심있는 한국 문화는 무엇인가요?
         </div>
