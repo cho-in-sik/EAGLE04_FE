@@ -15,5 +15,7 @@ module.exports = {
       { allowConstantExport: true },
     ],
     '@typescript-eslint/no-explicit-any': 'off', // 추가된 부분
+    'no-unused-vars': 'off', // 추가된 부분
+    '@typescript-eslint/no-unused-vars': 'off', // TypeScript용 규칙도 비활성화
   },
 };

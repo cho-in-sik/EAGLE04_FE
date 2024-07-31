@@ -1,23 +1,23 @@
 import styled from 'styled-components';
 import { api } from '../api/customAxios';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuthToken } from '../utils/token';
 import navbar from '../../public/svgs/navbar.svg';
+import logo from '../../public/svgs/logo.svg';
 
 export default function CategoryHome() {
   const token = getAuthToken();
   const headers = {
     Authorization: `Bearer ${token}`,
   };
-  const [id, setId] = useState([]);
   const navigate = useNavigate();
   const handleCategory = async () => {
     const res = await api.get('/category', { headers });
     console.log(res);
   };
 
-  const handleClick = async (id: number) => {
+  const handleClick = async (id: any) => {
     navigate(`/home/${id}`);
   };
   useEffect(() => {
@@ -25,27 +25,50 @@ export default function CategoryHome() {
   }, []);
   return (
     <Wrapper>
-      <CarouselWrapper></CarouselWrapper>
+      <CarouselWrapper>
+        {' '}
+        <img src={logo} style={{ marginTop: '-20px' }} />
+      </CarouselWrapper>
       <CategoryWrapper>
-        <Category style={{ marginTop: '10px', backgroundColor: '#32FFFF' }}>
+        <Category
+          style={{ marginTop: '10px', backgroundColor: '#32FFFF' }}
+          id="2"
+          onClick={(e) => handleClick(e.currentTarget.id)}
+        >
+          <h5>케이팝</h5>
+          <h6>K-POP</h6>
+        </Category>
+        <Category
+          style={{ backgroundColor: '#FFAF60' }}
+          id="1"
+          onClick={(e) => handleClick(e.currentTarget.id)}
+        >
+          <h5>생활양식</h5>
+          <h6>Game</h6>
+        </Category>
+        <Category
+          style={{ backgroundColor: '#17FF0C' }}
+          id="4"
+          onClick={(e) => handleClick(e.currentTarget.id)}
+        >
           <h5>음식</h5>
           <h6>Food</h6>
         </Category>
-        <Category style={{ backgroundColor: '#FFAF60' }}>
-          <h5>놀이</h5>
-          <h6>Game</h6>
+        <Category
+          style={{ backgroundColor: '#FFFF09' }}
+          id="5"
+          onClick={(e) => handleClick(e.currentTarget.id)}
+        >
+          <h5>전통문화</h5>
+          <h6>Culture</h6>
         </Category>
-        <Category style={{ backgroundColor: '#17FF0C' }}>
-          <h5>명절</h5>
-          <h6>Holiday</h6>
-        </Category>
-        <Category style={{ backgroundColor: '#FFFF09' }}>
-          <h5>생활</h5>
-          <h6>Lifestyle</h6>
-        </Category>
-        <Category style={{ backgroundColor: '#F6F' }}>
-          <h5>의상</h5>
-          <h6>Clothing</h6>
+        <Category
+          style={{ backgroundColor: '#F6F' }}
+          id="3"
+          onClick={(e) => handleClick(e.currentTarget.id)}
+        >
+          <h5>트렌드&밈</h5>
+          <h6>Trend</h6>
         </Category>
       </CategoryWrapper>
       <NavbarWrapper>
@@ -99,9 +122,11 @@ const Wrapper = styled.div`
 `;
 
 const CarouselWrapper = styled.div`
-  background-color: white;
   width: 100%;
   height: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const CategoryWrapper = styled.div`
@@ -116,7 +141,7 @@ const Category = styled.div`
   border-radius: 61px;
 
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   box-shadow: 0px -1px 4px 1px rgba(0, 0, 0, 0.25);
 
@@ -124,7 +149,7 @@ const Category = styled.div`
   font-weight: 400;
   line-height: normal;
   h5 {
-    font-size: 48px;
+    font-size: 40px;
     margin-left: 45px;
     margin-right: 10px;
     color: #232323;
@@ -132,5 +157,6 @@ const Category = styled.div`
   h6 {
     font-size: 24px;
     color: #694646;
+    padding-right: 20px;
   }
 `;

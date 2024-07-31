@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { api } from '../api/customAxios';
+import { getAuthToken } from '../utils/token';
 
 // Category 타입 정의
 interface Category {
@@ -11,27 +13,44 @@ interface Category {
 }
 
 export default function PickCulture() {
+  const token = getAuthToken();
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
   const { state } = useLocation();
-  console.log(state);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const navigate = useNavigate();
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
 
   const categories: Category[] = [
-    { id: 1, label: '의상1', color: '#FBB522', marginTop: '150px' },
-    { id: 2, label: '의상2', color: 'black', marginTop: '0' },
-    { id: 3, label: '의상3', color: '#8D8584', marginTop: '150px' },
-    { id: 4, label: '의상4', color: '#B91E24', marginTop: '0' },
-    { id: 5, label: '의상5', color: '#384B8F', marginTop: '0' },
+    { id: 1, label: '케이팝', color: '#FBB522', marginTop: '150px' },
+    { id: 2, label: '생활양식', color: 'black', marginTop: '0' },
+    { id: 3, label: '음식', color: '#8D8584', marginTop: '150px' },
+    { id: 4, label: '전통문화', color: '#B91E24', marginTop: '0' },
+    { id: 5, label: '트렌드&밈', color: '#384B8F', marginTop: '0' },
   ];
 
-  const toggleCategory = (label: string) => {
-    if (selectedCategories.includes(label)) {
+  const toggleCategory = (id: number) => {
+    if (selectedCategories.includes(id)) {
       setSelectedCategories(
-        selectedCategories.filter((categoryLabel) => categoryLabel !== label),
+        selectedCategories.filter((categoryId) => categoryId !== id),
       );
     } else {
-      setSelectedCategories([...selectedCategories, label]);
+      setSelectedCategories([...selectedCategories, id]);
     }
   };
+
+  const handleSubmit = async () => {
+    const res = await api.post(
+      '/favorite/add',
+      {
+        categoryIds: selectedCategories,
+      },
+      { headers },
+    );
+    console.log(res);
+    navigate('/category-home');
+  };
+
   console.log(selectedCategories);
 
   return (
@@ -61,12 +80,12 @@ export default function PickCulture() {
               key={category.id}
               backgroundColor={category.color}
               marginTop={category.marginTop}
-              selected={selectedCategories.includes(category.label)}
-              onClick={() => toggleCategory(category.label)}
+              selected={selectedCategories.includes(category.id)}
+              onClick={() => toggleCategory(category.id)}
             >
               <span>{category.label}</span>
               <span style={{ fontSize: '16px' }}>{category.label}</span>
-              {selectedCategories.includes(category.label) && (
+              {selectedCategories.includes(category.id) && (
                 <CheckMark>✔</CheckMark>
               )}
             </StyledCategory>
@@ -78,17 +97,17 @@ export default function PickCulture() {
               key={category.id}
               backgroundColor={category.color}
               marginTop={category.marginTop}
-              selected={selectedCategories.includes(category.label)}
-              onClick={() => toggleCategory(category.label)}
+              selected={selectedCategories.includes(category.id)}
+              onClick={() => toggleCategory(category.id)}
             >
               <span>{category.label}</span>
-              {selectedCategories.includes(category.label) && (
+              {selectedCategories.includes(category.id) && (
                 <CheckMark>✔</CheckMark>
               )}
             </StyledCategory>
           ))}
         </BottomCategory>
-        <GoGulelDam>글담길 즐기러 가기</GoGulelDam>
+        <GoGulelDam onClick={handleSubmit}>글담길 즐기러 가기</GoGulelDam>
       </CategoryWrapper>
     </Wrapper>
   );

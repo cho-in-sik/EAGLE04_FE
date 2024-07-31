@@ -1,7 +1,7 @@
 import { api } from '../api/customAxios';
 import { getAuthToken } from './token';
 
-export default async function checkTokenCategory() {
+export async function checkTokenCategory() {
   const token = getAuthToken();
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -11,5 +11,15 @@ export default async function checkTokenCategory() {
     return null;
   } else {
     window.location.href = '/home';
+  }
+}
+
+export async function checkToken() {
+  const token = getAuthToken();
+  console.log(token);
+  if (token) {
+    return;
+  } else {
+    window.location.href = '/login';
   }
 }

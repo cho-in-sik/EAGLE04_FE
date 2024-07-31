@@ -10,13 +10,67 @@ import 'swiper/css/effect-cards';
 import './styles.css';
 import styled, { keyframes } from 'styled-components';
 import { useState, useEffect } from 'react';
-// import { naverApi } from '../api/naverCloudAPI';
 import navbar from '../../public/svgs/navbar.svg';
-import kimchi from '../../public/svgs/kimchi.svg';
+import { useNavigate, useParams } from 'react-router-dom';
+import { api } from '../api/customAxios';
+import { getAuthToken } from '../utils/token';
+import { useQuery } from '@tanstack/react-query';
+
+import translate from '../../public/svgs/translate.svg';
+
+interface SwiperSlideStyledProps {
+  className: string;
+  key: number;
+}
+
+interface BackgroundProps {
+  backgroundColor?: string;
+}
+
+const colors = [
+  'linear-gradient(180deg, #FFF 0%, #7289FB 100%)',
+  'linear-gradient(180deg, #FFF 0%, #FF9E9E 100%)',
+  'linear-gradient(180deg, #FFF 0%, #BC88FF 100%)',
+  'linear-gradient(180deg, #FFF 0%, #FFAF60 100%)',
+  'linear-gradient(180deg, #FFF 0%, #46FF40 100%)',
+  'linear-gradient(180deg, #FFF 0%, #4AFFFF 100%)',
+];
+
+const getRandomColorIndex = () => {
+  return Math.floor(Math.random() * colors.length);
+};
 
 export default function Home() {
+  const token = getAuthToken();
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  const { categoryId } = useParams<{ categoryId: string }>();
+
+  const navigate = useNavigate();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [open, setOpen] = useState(false);
+  const [colorIndexes, setColorIndexes] = useState<number[]>([]);
+
+  const [translate0, setTranslate0] = useState('');
+  const [translate1, setTranslate1] = useState('');
+
+  const handleCall = async () => {
+    const res = await api.get(`/category/${categoryId}/items`, { headers });
+    return res;
+  };
+
+  const { data } = useQuery({
+    queryKey: ['card', categoryId],
+    queryFn: () => handleCall(),
+  });
+
+  useEffect(() => {
+    if (data?.data.response.items) {
+      const indexes = data.data.response.items.map(() => getRandomColorIndex());
+      setColorIndexes(indexes);
+    }
+  }, [data]);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -29,19 +83,44 @@ export default function Home() {
     setOpen((prev) => !prev);
   };
 
-  const handleBookmarkClick = (event) => {
+  const handleBookmarkClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ) => {
     event.stopPropagation();
     setIsBookmarked(!isBookmarked);
   };
 
-  // const handleVoice = async () => {
-  //   try {
-  //     const res = await naverApi.post('/tts-premium/v1/tts');
-  //     console.log(res);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const handleTranslate = async (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    description: string,
+    modifiedDescription: string,
+  ) => {
+    event.stopPropagation();
+    console.log(1);
+    const res = await api.post(
+      '/translate',
+      { text: description, target: 'en' },
+      { headers },
+    );
+    const res2 = await api.post(
+      '/translate',
+      { text: modifiedDescription, target: 'en' },
+      { headers },
+    );
+    console.log(res);
+    console.log(res2);
+  };
+
+  const parseItemName = (name: string) => {
+    const match = name.match(/^(.*?)\s*\((.*?)\)$/);
+    return match
+      ? { main: match[1], translation: match[2] }
+      : { main: name, translation: '' };
+  };
+
+  const replaceDescription = (description: string, translation: string) => {
+    return description.replace(/이것/g, translation);
+  };
 
   return (
     <>
@@ -61,49 +140,97 @@ export default function Home() {
           modules={[EffectCards]}
           className="mySwiper"
         >
-          <SwiperSlideStyled className={open ? 'open' : 'close'}>
-            <Card onClick={handleOpen}>
-              <Front>
-                <ImgWrapper onClick={handleBookmarkClick}>
-                  <img
-                    src={isBookmarked ? filledBookmark : bookmark}
-                    alt="bookmark"
-                  />
-                </ImgWrapper>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                  }}
-                >
-                  <h1 style={{ fontSize: '42px' }}>김치</h1>
-                  <span style={{ fontSize: '20px', marginBottom: '50px' }}>
-                    Kimchi
-                  </span>
-                  <div>
-                    <img src={kimchi} alt="" />
-                  </div>
-                </div>
-              </Front>
-              <Back>Flipped</Back>
-            </Card>
-          </SwiperSlideStyled>
+          {data?.data.response.items.map((item: any, index: number) => {
+            const { main, translation } = parseItemName(item.name);
 
-          <SwiperSlide>slide2</SwiperSlide>
-          <SwiperSlide>Slide 3</SwiperSlide>
-          <SwiperSlide>Slide 4</SwiperSlide>
-          <SwiperSlide>Slide 5</SwiperSlide>
-          <SwiperSlide>Slide 6</SwiperSlide>
-          <SwiperSlide>Slide 7</SwiperSlide>
-          <SwiperSlide>Slide 8</SwiperSlide>
-          <SwiperSlide>Slide 9</SwiperSlide>
+            const imageUrl = `http://223.130.147.109:8080/${item.imageUrl}`;
+            const backgroundColor = colors[colorIndexes[index]];
+            const modifiedDescription = replaceDescription(
+              item.additionalDescription,
+              translation,
+            );
+
+            return (
+              <SwiperSlideStyled
+                className={open ? 'open' : 'close'}
+                key={item.id}
+              >
+                <Card onClick={handleOpen}>
+                  <Front backgroundColor={backgroundColor}>
+                    <ImgWrapper onClick={handleBookmarkClick}>
+                      <img
+                        src={isBookmarked ? filledBookmark : bookmark}
+                        alt="bookmark"
+                      />
+                    </ImgWrapper>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <h1 style={{ fontSize: '42px' }}>{main}</h1>
+                      <span style={{ fontSize: '20px', marginBottom: '50px' }}>
+                        {translation}
+                      </span>
+                      <div>
+                        <img
+                          style={{ borderRadius: '20px' }}
+                          src={imageUrl}
+                          alt={main}
+                          width={250}
+                          height={258}
+                        />
+                      </div>
+                    </div>
+                  </Front>
+                  <Back>
+                    <div
+                      style={{ padding: '20px' }}
+                      onClick={(event) =>
+                        handleTranslate(
+                          event,
+                          item.description,
+                          modifiedDescription,
+                        )
+                      }
+                    >
+                      <img src={translate} alt="translate icon" />
+                    </div>
+                    <div
+                      style={{
+                        width: '80%',
+                        marginBottom: '25px',
+                      }}
+                    >
+                      {item.description}
+                    </div>
+                    <div
+                      style={{
+                        width: '80%',
+                      }}
+                    >
+                      {modifiedDescription}
+                    </div>
+                  </Back>
+                </Card>
+              </SwiperSlideStyled>
+            );
+          })}
         </Swiper>
         <NavbarWrapper>
-          <img src={navbar} />
+          <img src={navbar} alt="navbar" />
           <ButtonWrapper>
-            <Nav>퀴즈</Nav>
-            <Nav style={{ background: '#4D5FC9', color: 'white' }}>홈</Nav>
+            <div onClick={() => navigate('/quiz')}>
+              <Nav>퀴즈</Nav>
+            </div>
+            <Nav
+              style={{ background: '#4D5FC9', color: 'white' }}
+              onClick={() => navigate('/category-home')}
+            >
+              홈
+            </Nav>
             <Nav>MY</Nav>
           </ButtonWrapper>
         </NavbarWrapper>
@@ -111,17 +238,15 @@ export default function Home() {
     </>
   );
 }
-
 const Wrapper = styled.div`
   width: 100vw;
   height: 100dvh;
-  /* background-color: #f5f3ed; */
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  background-color: #f5f4f1;
 `;
 
 const ImgWrapper = styled.div`
@@ -158,7 +283,7 @@ const Card = styled.div`
   transition: transform 0.6s;
 `;
 
-const SwiperSlideStyled = styled(SwiperSlide)`
+const SwiperSlideStyled = styled(SwiperSlide)<SwiperSlideStyledProps>`
   perspective: 1000px;
   &.open ${Card} {
     animation: ${flipToBack} 0.6s forwards;
@@ -168,22 +293,35 @@ const SwiperSlideStyled = styled(SwiperSlide)`
   }
 `;
 
-const Front = styled.div`
+const Front = styled.div<BackgroundProps>`
   width: 100%;
   height: 100%;
   position: absolute;
   backface-visibility: hidden;
-  /* background: linear-gradient(180deg, #fff 0%, #7289fb 100%); */
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 18px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+  background: ${(props) => props.backgroundColor};
 `;
 
 const Back = styled(Front)`
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  flex-direction: column;
   transform: rotateY(180deg);
+  position: relative;
   background-color: white;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+  img {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+  }
 `;
 
 const NavbarWrapper = styled.div`
