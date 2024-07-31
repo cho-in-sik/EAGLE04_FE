@@ -149,7 +149,7 @@ export default function Home() {
           {data?.data.response.items.map((item: any, index: number) => {
             const { main, translation } = parseItemName(item.name);
 
-            const imageUrl = `http://223.130.147.109:8080/api/${item.imageUrl}`;
+            const imageUrl = `https://hanbit.duckdns.org/api/${item.imageUrl}`;
             const backgroundColor = colors[colorIndexes[index]];
             const modifiedDescription = replaceDescription(
               item.additionalDescription,

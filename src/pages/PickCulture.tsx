@@ -31,11 +31,11 @@ export default function PickCulture() {
   };
 
   const categories: Category[] = [
-    { id: 1, label: '케이팝', color: '#FBB522', marginTop: '150px' },
-    { id: 2, label: '생활양식', color: 'black', marginTop: '0' },
-    { id: 3, label: '음식', color: '#8D8584', marginTop: '150px' },
-    { id: 4, label: '전통문화', color: '#B91E24', marginTop: '0' },
-    { id: 5, label: '트렌드&밈', color: '#384B8F', marginTop: '0' },
+    { id: 1, label: '케이팝', color: '#BEBEBE', marginTop: '150px' },
+    { id: 2, label: '생활양식', color: '#FFAF60', marginTop: '0' },
+    { id: 3, label: '음식', color: '#FFFF1C', marginTop: '150px' },
+    { id: 4, label: '전통문화', color: '#FF25FF', marginTop: '0' },
+    { id: 5, label: '트렌드&밈', color: '#17FF0C', marginTop: '0' },
   ];
 
   const toggleCategory = (id: number) => {
