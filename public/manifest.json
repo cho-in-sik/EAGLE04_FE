@@ -1,6 +1,6 @@
 {
   "name": "글담길",
-  "short_name": "vite-pwa",
+  "short_name": "글담길",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

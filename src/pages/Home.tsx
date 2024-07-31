@@ -52,8 +52,7 @@ export default function Home() {
   const [open, setOpen] = useState(false);
   const [colorIndexes, setColorIndexes] = useState<number[]>([]);
 
-  const [translate0, setTranslate0] = useState('');
-  const [translate1, setTranslate1] = useState('');
+  const [translations, setTranslations] = useState<any>({});
 
   const handleCall = async () => {
     const res = await api.get(`/category/${categoryId}/items`, { headers });
@@ -92,11 +91,11 @@ export default function Home() {
 
   const handleTranslate = async (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    itemId: number,
     description: string,
     modifiedDescription: string,
   ) => {
     event.stopPropagation();
-    console.log(1);
     const res = await api.post(
       '/translate',
       { text: description, target: 'en' },
@@ -107,8 +106,13 @@ export default function Home() {
       { text: modifiedDescription, target: 'en' },
       { headers },
     );
-    console.log(res);
-    console.log(res2);
+    setTranslations((prevTranslations) => ({
+      ...prevTranslations,
+      [itemId]: {
+        translate0: res.data.response,
+        translate1: res2.data.response,
+      },
+    }));
   };
 
   const parseItemName = (name: string) => {
@@ -170,7 +174,9 @@ export default function Home() {
                         alignItems: 'center',
                       }}
                     >
-                      <h1 style={{ fontSize: '42px' }}>{main}</h1>
+                      <h1 style={{ fontSize: '42px', maxWidth: '80%' }}>
+                        {main}
+                      </h1>
                       <span style={{ fontSize: '20px', marginBottom: '50px' }}>
                         {translation}
                       </span>
@@ -187,10 +193,11 @@ export default function Home() {
                   </Front>
                   <Back>
                     <div
-                      style={{ padding: '20px' }}
+                      style={{ padding: '20px', marginTop: '100px' }}
                       onClick={(event) =>
                         handleTranslate(
                           event,
+                          item.id,
                           item.description,
                           modifiedDescription,
                         )
@@ -206,13 +213,34 @@ export default function Home() {
                     >
                       {item.description}
                     </div>
+                    {translations[item.id]?.translate0 && (
+                      <div
+                        style={{
+                          width: '80%',
+                          marginBottom: '25px',
+                        }}
+                      >
+                        {translations[item.id].translate0}
+                      </div>
+                    )}
                     <div
                       style={{
                         width: '80%',
+                        marginBottom: '25px',
                       }}
                     >
                       {modifiedDescription}
                     </div>
+                    {translations[item.id]?.translate1 && (
+                      <div
+                        style={{
+                          width: '80%',
+                          marginBottom: '25px',
+                        }}
+                      >
+                        {translations[item.id].translate1}
+                      </div>
+                    )}
                   </Back>
                 </Card>
               </SwiperSlideStyled>
@@ -238,6 +266,7 @@ export default function Home() {
     </>
   );
 }
+
 const Wrapper = styled.div`
   width: 100vw;
   height: 100dvh;
@@ -307,6 +336,9 @@ const Front = styled.div<BackgroundProps>`
 `;
 
 const Back = styled(Front)`
+  border: 14px solid #7f94fc;
+  justify-content: flex-start;
+  overflow: auto;
   font-size: 20px;
   font-style: normal;
   font-weight: 400;

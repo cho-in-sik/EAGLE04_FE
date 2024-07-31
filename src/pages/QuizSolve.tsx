@@ -20,7 +20,7 @@ export default function QuizSolve() {
     Array(10).fill(''),
   );
   const [data, setData] = useState<any>(null);
-  console.log(data);
+
   useEffect(() => {
     if (categoryId === '2') {
       setData(kpop);
@@ -31,9 +31,17 @@ export default function QuizSolve() {
     }
   }, [categoryId]);
 
+  console.log(selectedValue);
+
   const handleFingerprintClick = (index: number, value: string) => {
     const newSelectedValue = [...selectedValue];
     newSelectedValue[index] = value;
+    setSelectedValue(newSelectedValue);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newSelectedValue = [...selectedValue];
+    newSelectedValue[num] = e.target.value;
     setSelectedValue(newSelectedValue);
   };
 
@@ -41,6 +49,7 @@ export default function QuizSolve() {
     if (num >= 9) return; // num이 10 이상이면 넘어가지 않도록
     setNum((v) => ++v);
   };
+
   if (!data) {
     return <div>Loading...</div>;
   }
@@ -94,7 +103,7 @@ export default function QuizSolve() {
                 </Fingerprint>
               ))}
             </div>
-          ) : (
+          ) : data[num]?.type === 'ox' ? (
             <div>
               <QuizNum>{`문제 ${data[num]?.id}.`}</QuizNum>
               <QuizTitle>{data[num]?.description}</QuizTitle>
@@ -113,6 +122,17 @@ export default function QuizSolve() {
                   X
                 </Ox>
               </OxWrapper>
+            </div>
+          ) : (
+            <div>
+              <QuizNum>{`문제 ${data[num]?.id}.`}</QuizNum>
+              <QuizTitle>{data[num]?.description}</QuizTitle>
+              {data[num].dd ? <DD>{data[num].dd}</DD> : null}
+              <SubDiv
+                placeholder="답을 작성해주세요."
+                value={selectedValue[num]}
+                onChange={handleInputChange}
+              />
             </div>
           )}
         </FingerprintWrapper>
@@ -176,6 +196,7 @@ const QuizBox = styled.div`
   margin-bottom: 40px;
   padding-top: 25px;
 `;
+
 const QuizNum = styled.div`
   font-family: DOSGothic;
   padding-left: 26px;
@@ -184,6 +205,7 @@ const QuizNum = styled.div`
   font-weight: 500;
   margin-bottom: 30px;
 `;
+
 const QuizTitle = styled.div`
   padding-left: 26px;
   padding-right: 26px;
@@ -191,6 +213,26 @@ const QuizTitle = styled.div`
   margin-bottom: 50px;
   max-height: 70px;
 `;
+
+const DD = styled.div`
+  padding-left: 26px;
+  padding-right: 26px;
+  font-size: 20px;
+  margin-top: -20px;
+  background-color: #efeeee;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-bottom: 30px;
+`;
+
+const SubDiv = styled.input`
+  width: 92%;
+  padding-bottom: 150px;
+  border: 3px solid #4d5fc9;
+  padding-left: 15px;
+  padding-top: 15px;
+`;
+
 const FingerprintWrapper = styled.div`
   padding-left: 26px;
   padding-right: 26px;
