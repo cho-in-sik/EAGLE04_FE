@@ -75,6 +75,7 @@ export default function CategoryHome() {
         }}
         open={Boolean(anchorEl)}
         onClose={handleClose}
+        sx={{ maxHeight: '300px' }}
       >
         {lang.map((lang) => (
           <MenuItem onClick={() => handleChose(lang)}>{lang.value}</MenuItem>
