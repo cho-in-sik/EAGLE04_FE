@@ -7,11 +7,12 @@ import Naver from './pages/Naver';
 import Home from './pages/Home';
 
 import SelfLogin from './pages/SelfLogin';
-// import { checkToken, checkTokenCategory } from './utils/loaders';
+import { checkToken, checkTokenCategory } from './utils/loaders';
 import CategoryHome from './pages/CategoryHome';
 import Quiz from './pages/Quiz';
 import QuizSolve from './pages/QuizSolve';
 import QuizComplete from './pages/QuizComplete';
+import { logoutAction } from './utils/loaders';
 
 const router = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
   {
     path: '/quiz-complete/:categoryId',
     element: <QuizComplete />,
+  },
+  {
+    path: '/logout',
+    action: logoutAction,
   },
 ]);
 

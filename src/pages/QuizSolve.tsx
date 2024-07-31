@@ -6,6 +6,10 @@ import { useEffect, useState } from 'react';
 import nextArrow from '../../public/svgs/next.svg';
 import nextArrow0 from '../../public/svgs/next0.svg';
 import { kpop, trendsAndMemes, lifestyle } from '../data';
+import translate from '../../public/svgs/translate.svg';
+import { api } from '../api/customAxios';
+import { getAuthToken } from '../utils/token';
+import useLanguage from '../hook/useLanguage';
 
 interface FingerprintProps {
   selected: boolean;
@@ -13,13 +17,19 @@ interface FingerprintProps {
 
 export default function QuizSolve() {
   const { categoryId } = useParams();
+  const token = getAuthToken();
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+
+  const { language } = useLanguage();
+  console.log(language);
 
   const navigate = useNavigate();
   const [num, setNum] = useState(0);
-  const [selectedValue, setSelectedValue] = useState<string[]>(
-    Array(10).fill(''),
-  );
+  const [selectedValue, setSelectedValue] = useState<string[]>([]);
   const [data, setData] = useState<any>(null);
+  const [translatedData, setTranslatedData] = useState<any>(null);
 
   useEffect(() => {
     if (categoryId === '2') {
@@ -31,7 +41,14 @@ export default function QuizSolve() {
     }
   }, [categoryId]);
 
+  useEffect(() => {
+    if (data) {
+      setSelectedValue(Array(data.length).fill(''));
+    }
+  }, [data]);
+
   console.log(selectedValue);
+  console.log(data);
 
   const handleFingerprintClick = (index: number, value: string) => {
     const newSelectedValue = [...selectedValue];
@@ -48,13 +65,47 @@ export default function QuizSolve() {
   const handleNext = () => {
     if (num >= data.length - 1) {
       navigate(`/quiz-complete/${categoryId}`, { state: selectedValue });
-    } // num이 10 이상이면 넘어가지 않도록
-    setNum((v) => ++v);
+    } else {
+      setNum((v) => ++v);
+    }
+  };
+
+  const handleTranslate = async () => {
+    const currentData = data[num];
+    const res = await api.post(
+      '/translate',
+      { text: currentData.description, target: language.type },
+      { headers },
+    );
+    const translatedDescription = res.data.response;
+
+    const translatedFingerprint = await Promise.all(
+      currentData.fingerprint.map(async (item) => {
+        const res = await api.post(
+          '/translate',
+          { text: item, target: language.type },
+          { headers },
+        );
+        return res.data.response;
+      }),
+    );
+
+    setTranslatedData({
+      ...data,
+      [num]: {
+        ...currentData,
+        description: translatedDescription,
+        fingerprint: translatedFingerprint,
+      },
+    });
   };
 
   if (!data) {
     return <div>Loading...</div>;
   }
+
+  const displayData =
+    translatedData && translatedData[num] ? translatedData[num] : data[num];
 
   return (
     <Wrapper>
@@ -91,11 +142,14 @@ export default function QuizSolve() {
 
       <QuizBox>
         <FingerprintWrapper>
-          {data[num]?.type === 'multiple' ? (
+          <Translate onClick={handleTranslate}>
+            <img src={translate} alt="translate" />
+          </Translate>
+          {displayData?.type === 'multiple' ? (
             <div>
-              <QuizNum>{`문제 ${data[num]?.id}.`}</QuizNum>
-              <QuizTitle>{data[num]?.description}</QuizTitle>
-              {data[num]?.fingerprint.map((item) => (
+              <QuizNum>{`문제 ${displayData?.id}.`}</QuizNum>
+              <QuizTitle>{displayData?.description}</QuizTitle>
+              {displayData?.fingerprint.map((item) => (
                 <Fingerprint
                   key={item}
                   onClick={() => handleFingerprintClick(num, item)}
@@ -105,10 +159,10 @@ export default function QuizSolve() {
                 </Fingerprint>
               ))}
             </div>
-          ) : data[num]?.type === 'ox' ? (
+          ) : displayData?.type === 'ox' ? (
             <div>
-              <QuizNum>{`문제 ${data[num]?.id}.`}</QuizNum>
-              <QuizTitle>{data[num]?.description}</QuizTitle>
+              <QuizNum>{`문제 ${displayData?.id}.`}</QuizNum>
+              <QuizTitle>{displayData?.description}</QuizTitle>
               <OxWrapper>
                 <Ox
                   style={{ borderRight: '1px solid black' }}
@@ -127,9 +181,9 @@ export default function QuizSolve() {
             </div>
           ) : (
             <div>
-              <QuizNum>{`문제 ${data[num]?.id}.`}</QuizNum>
-              <QuizTitle>{data[num]?.description}</QuizTitle>
-              {data[num].dd ? <DD>{data[num].dd}</DD> : null}
+              <QuizNum>{`문제 ${displayData?.id}.`}</QuizNum>
+              <QuizTitle>{displayData?.description}</QuizTitle>
+              {displayData.dd ? <DD>{displayData.dd}</DD> : null}
               <SubDiv
                 placeholder="답을 작성해주세요."
                 value={selectedValue[num]}
@@ -153,6 +207,11 @@ export default function QuizSolve() {
     </Wrapper>
   );
 }
+const Translate = styled.div`
+  position: absolute;
+  right: 10px;
+  top: 10px;
+`;
 
 const OxWrapper = styled.div`
   width: 240px;
@@ -197,6 +256,7 @@ const QuizBox = styled.div`
   height: 460px;
   margin-bottom: 40px;
   padding-top: 25px;
+  position: relative;
 `;
 
 const QuizNum = styled.div`

@@ -17,6 +17,7 @@ import { getAuthToken } from '../utils/token';
 import { useQuery } from '@tanstack/react-query';
 
 import translate from '../../public/svgs/translate.svg';
+import useLanguage from '../hook/useLanguage';
 
 interface SwiperSlideStyledProps {
   className: string;
@@ -46,6 +47,7 @@ export default function Home() {
     Authorization: `Bearer ${token}`,
   };
   const { categoryId } = useParams<{ categoryId: string }>();
+  const { language } = useLanguage();
 
   const navigate = useNavigate();
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -98,12 +100,12 @@ export default function Home() {
     event.stopPropagation();
     const res = await api.post(
       '/translate',
-      { text: description, target: 'en' },
+      { text: description, target: language.type },
       { headers },
     );
     const res2 = await api.post(
       '/translate',
-      { text: modifiedDescription, target: 'en' },
+      { text: modifiedDescription, target: language.type },
       { headers },
     );
     setTranslations((prevTranslations) => ({
@@ -147,7 +149,7 @@ export default function Home() {
           {data?.data.response.items.map((item: any, index: number) => {
             const { main, translation } = parseItemName(item.name);
 
-            const imageUrl = `http://223.130.147.109:8080/${item.imageUrl}`;
+            const imageUrl = `http://223.130.147.109:8080/api/${item.imageUrl}`;
             const backgroundColor = colors[colorIndexes[index]];
             const modifiedDescription = replaceDescription(
               item.additionalDescription,

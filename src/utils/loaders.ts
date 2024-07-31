@@ -1,5 +1,6 @@
 import { api } from '../api/customAxios';
 import { getAuthToken } from './token';
+import { redirect } from 'react-router-dom';
 
 export async function checkTokenCategory() {
   const token = getAuthToken();
@@ -18,8 +19,15 @@ export async function checkToken() {
   const token = getAuthToken();
   console.log(token);
   if (token) {
-    return;
+    return null;
   } else {
-    window.location.href = '/';
+    window.location.href = '/self-login';
+    return;
   }
+}
+
+export function logoutAction() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('expiration');
+  return redirect('/');
 }
