@@ -11,6 +11,7 @@ import SelfLogin from './pages/SelfLogin';
 import CategoryHome from './pages/CategoryHome';
 import Quiz from './pages/Quiz';
 import QuizSolve from './pages/QuizSolve';
+import QuizComplete from './pages/QuizComplete';
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
     // errorElement: <NotFound />,
     children: [
       {
-        path: 'login',
+        path: '',
         element: <Login />,
       },
       {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
   {
     path: 'quiz-solve/:categoryId',
     element: <QuizSolve />,
+  },
+  {
+    path: '/quiz-complete/:categoryId',
+    element: <QuizComplete />,
   },
 ]);
 

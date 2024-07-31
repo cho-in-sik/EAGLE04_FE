@@ -8,7 +8,7 @@ export default function NaverLogin() {
       callbackUrl: 'http://localhost:5173/naver',
       clientSecret: 'OmpKQBt7Z6',
       isPopup: false,
-      loginButton: { color: 'green', type: 3, height: '60' },
+      loginButton: { color: 'green', type: 3, height: '53' },
     });
     naverLogin.init();
   }, []);

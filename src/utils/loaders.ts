@@ -10,7 +10,7 @@ export async function checkTokenCategory() {
   if (res.data.response === false) {
     return null;
   } else {
-    window.location.href = '/home';
+    window.location.href = '/category-home';
   }
 }
 
@@ -20,6 +20,6 @@ export async function checkToken() {
   if (token) {
     return;
   } else {
-    window.location.href = '/login';
+    window.location.href = '/';
   }
 }

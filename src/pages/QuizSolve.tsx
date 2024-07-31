@@ -46,7 +46,9 @@ export default function QuizSolve() {
   };
 
   const handleNext = () => {
-    if (num >= 9) return; // num이 10 이상이면 넘어가지 않도록
+    if (num >= data.length - 1) {
+      navigate(`/quiz-complete/${categoryId}`, { state: selectedValue });
+    } // num이 10 이상이면 넘어가지 않도록
     setNum((v) => ++v);
   };
 
@@ -76,7 +78,7 @@ export default function QuizSolve() {
             }}
           >
             <div style={{ marginBottom: '10px', marginLeft: '-30px' }}>
-              {`${num + 1}/10`}
+              {`${num + 1}/${data.length}`}
             </div>
           </div>
         </TopWrapper>
